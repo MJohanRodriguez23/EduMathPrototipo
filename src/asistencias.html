@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistencias - Aprendiendo Matemáticas</title>
+    <!-- Enlace al archivo CSS de Tailwind -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <header class="bg-gray-800 text-white py-4">
+        <!-- Encabezado de la página -->
+    </header>
+    
+    <main class="container mx-auto py-8">
+        <section id="asistencias" class="mb-8">
+            <!-- Sección para mostrar las asistencias -->
+            <h2 class="text-2xl font-bold mb-4">Asistencias</h2>
+            <table class="w-full bg-white rounded-lg shadow-lg">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                        <th class="py-3 px-6 text-left">Nombre</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaAsistencias">
+                    <!-- Aquí se cargarán las asistencias -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+    
+    <footer class="bg-gray-800 text-white py-4">
+        <!-- Pie de página -->
+    </footer>
+
+    <!-- Aquí se coloca el código JavaScript -->
+    <script>
+        // Función para cargar las asistencias desde el almacenamiento local
+        function cargarAsistencias() {
+            var asistencia = localStorage.getItem("asistencia");
+            if (asistencia) {
+                asistencia = JSON.parse(asistencia);
+                var tablaAsistencias = document.getElementById("tablaAsistencias");
+                for (var i = 0; i < asistencia.length; i++) {
+                    var row = tablaAsistencias.insertRow(i);
+                    var cell = row.insertCell(0);
+                    cell.textContent = asistencia[i];
+                }
+            }
+        }
+
+        // Cargar asistencias al cargar la página
+        cargarAsistencias();
+    </script>
+</body>
+</html>

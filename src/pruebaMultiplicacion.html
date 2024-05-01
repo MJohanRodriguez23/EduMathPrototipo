@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Multiplicaciones - Aprendiendo Matemáticas</title>
+    <!-- Enlace al archivo CSS de Tailwind -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Estilos adicionales */
+        .fruta-img {
+            width: 50px; /* Tamaño de las imágenes de las frutas */
+            height: 50px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <header class="bg-gray-800 text-white py-4">
+        <!-- Encabezado de la página -->
+    </header>
+    
+    <main class="container mx-auto py-8">
+        <section id="registro-nombre" class="mb-8">
+            <!-- Sección para el registro de nombre -->
+            <h2 class="text-2xl font-bold mb-4">Registro de Nombre</h2>
+            <form id="formNombre" class="flex flex-col items-center">
+                <input type="text" id="nombre" class="px-2 py-1 border rounded-md mb-2 focus:outline-none focus:border-blue-500" placeholder="Nombre" required>
+                <button type="button" id="btnIniciarPrueba" class="px-4 py-2 bg-blue-500 text-white rounded-md">Iniciar Prueba</button>
+            </form>
+        </section>
+
+        <section id="juego-multiplicaciones" class="mb-8 hidden">
+            <!-- Sección para el juego de multiplicaciones -->
+            <h2 class="text-2xl font-bold mb-4">Juego de Multiplicaciones</h2>
+            <div class="border border-gray-300 p-4 rounded-md flex flex-wrap justify-center items-center">
+                <div id="pregunta" class="text-xl mb-4 flex items-center"></div>
+                <input type="text" id="respuesta" class="px-2 py-1 border rounded-md focus:outline-none focus:border-blue-500">
+                <button id="enviar" class="px-4 py-2 bg-blue-500 text-white rounded-md ml-2">Enviar</button>
+                <button id="mostrarResultados" class="px-4 py-2 bg-green-500 text-white rounded-md mt-4 hidden">Mostrar Resultados</button>
+            </div>
+            <div id="resultados" class="mt-4 hidden">
+                <h3 class="text-xl font-bold mb-2">Resultados:</h3>
+                <ul id="listaResultados"></ul>
+                <button id="volverInicio" class="px-4 py-2 bg-gray-500 text-white rounded-md mt-4">Volver al inicio</button>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="bg-gray-800 text-white py-4">
+        <!-- Pie de página -->
+    </footer>
+
+    <!-- Aquí se coloca el código JavaScript -->
+    <script>
+        var num1, num2;
+        var ejercicioActual = 1;
+        var respuestasCorrectas = 0;
+        var resultados = [];
+
+        function generarPregunta() {
+            num1 = Math.floor(Math.random() * 10) + 1;
+            num2 = Math.floor(Math.random() * 10) + 1;
+            var pregunta = "";
+            for (var i = 0; i < num1; i++) {
+                pregunta += '<img src="/img/naranja.webp" alt="Naranja" class="fruta-img">';
+            }
+            pregunta += " × ";
+            for (var i = 0; i < num2; i++) {
+                pregunta += '<img src="/img/naranja.webp" alt="Naranja" class="fruta-img">';
+            }
+            pregunta += " = ?";
+            return pregunta;
+        }
+
+        function verificarRespuesta() {
+            var respuestaUsuario = document.getElementById("respuesta").value;
+            var respuestaCorrecta = num1 * num2;
+            var resultado = document.getElementById("pregunta");
+            if (parseInt(respuestaUsuario) === respuestaCorrecta) {
+                resultado.innerHTML += '<br><span class="text-green-500">¡Respuesta correcta!</span>';
+                respuestasCorrectas++;
+                resultados.push("Ejercicio " + ejercicioActual + ": Correcto");
+            } else {
+                resultado.innerHTML += '<br><span class="text-red-500">Respuesta incorrecta. La respuesta correcta es ' + respuestaCorrecta + '</span>';
+                resultados.push("Ejercicio " + ejercicioActual + ": Incorrecto");
+            }
+            ejercicioActual++;
+            if (ejercicioActual <= 10) {
+                setTimeout(siguienteEjercicio, 2000); // Mostrar siguiente ejercicio después de 2 segundos
+            } else {
+                document.getElementById("mostrarResultados").classList.remove("hidden"); // Mostrar botón de mostrar resultados
+            }
+        }
+
+        function siguienteEjercicio() {
+            var pregunta = generarPregunta();
+            document.getElementById("pregunta").innerHTML = pregunta;
+            document.getElementById("respuesta").value = "";
+            document.getElementById("resultado").textContent = "";
+        }
+
+        document.getElementById("btnIniciarPrueba").addEventListener("click", function() {
+            var nombreEstudiante = document.getElementById("nombre").value;
+            localStorage.setItem("nombreEstudiante", nombreEstudiante);
+            document.getElementById("registro-nombre").classList.add("hidden");
+            document.getElementById("juego-multiplicaciones").classList.remove("hidden");
+            siguienteEjercicio(); // Llamada a la función siguienteEjercicio al iniciar la prueba
+        });
+
+        // Evento click para el botón "Enviar"
+        document.getElementById("enviar").addEventListener("click", function() {
+            verificarRespuesta();
+        });
+
+        // Evento click para el botón "Mostrar Resultados"
+        document.getElementById("mostrarResultados").addEventListener("click", function() {
+            mostrarResultados();
+        });
+
+        // Evento click para el botón "Volver al inicio"
+        document.getElementById("volverInicio").addEventListener("click", function() {
+            window.location.href = "index.html"; // Redirigir a la página de inicio
+        });
+
+        // Función para mostrar los resultados
+        function mostrarResultados() {
+            var listaResultados = document.getElementById("listaResultados");
+            listaResultados.innerHTML = ""; // Limpiar lista de resultados
+            for (var i = 0; i < resultados.length; i++) {
+                var li = document.createElement("li");
+                li.textContent = resultados[i];
+                listaResultados.appendChild(li);
+            }
+            document.getElementById("resultados").classList.remove("hidden"); // Mostrar div de resultados
+            guardarAsistencia();
+        }
+
+        // Función para guardar la asistencia en el almacenamiento local
+        function guardarAsistencia() {
+            var nombreEstudiante = localStorage.getItem("nombreEstudiante");
+            var asistencia = localStorage.getItem("asistencia");
+            if (!asistencia) {
+                asistencia = [];
+            } else {
+                asistencia = JSON.parse(asistencia);
+            }
+            asistencia.push(nombreEstudiante);
+            localStorage.setItem("asistencia", JSON.stringify(asistencia));
+        }
+    </script>
+</body>
+</html>
